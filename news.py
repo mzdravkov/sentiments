@@ -6,7 +6,7 @@ from newspaper import Article
 
 NEWS_API_SEARCH_URL = "https://newsapi.org/v2/everything?apiKey={}&q={}&language={}&sortBy=relevancy&page={}&pageSize={}"
 NEWS_API_KEY=os.environ['NEWS_API_KEY']
-PAGE_SIZE = 20
+PAGE_SIZE = 100
 
 
 def search_articles(

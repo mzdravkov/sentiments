@@ -78,33 +78,55 @@
             </div>
           </div>
 
-          <div id="results">
-            <div id="articles">
-              <nav aria-label="Articles navigation" style="margin-bottom: 30px;">
-                <ul id="articles-pagination" class="pagination justify-content-center">
-                  <li class="page-item"><a class="page-link" href="#">Previous</a></li>
-                  {% for article in articles %}
-                  <li class="page-item"><a class="page-link" href="#">{{ loop.index }}</a></li>
-                  {% endfor %}
-                  <li class="page-item"><a class="page-link" href="#">Next</a></li>
-                </ul>
-              </nav>
+          {% if articles is defined and articles|length > 0 %}
+            <div id="results">
+              <div id="articles">
 
-              {% if articles %}
-                {% for article in articles %}
-                  <div id="article-{{ loop.index }}" class="article-content" style="display: none">
-                    <center>
-                      <h4>{{ article.title }}</h4><br/>
-                      {{ article.url }} <br/>
-                      {{ article.publish_date }} <br/>
-                    </center>
-                    <hr/>
-                    {{ article.text }}
-                  </div>
-                {% endfor %}
-              {% endif %}
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th scope="col">Mean score</th>
+                      <th scope="col">Median score</th>
+                      <th scope="col">Standard deviation</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>{{ mean_sentiment_score }}</td>
+                      <td>{{ median_sentiment_score }}</td>
+                      <td>{{ std_dev_sentiment_scores }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+
+                <nav aria-label="Articles navigation" style="margin-bottom: 30px;">
+                  <ul id="articles-pagination" class="pagination justify-content-center">
+                    <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+                    {% for article in articles %}
+                    <li class="page-item"><a class="page-link" href="#">{{ loop.index }}</a></li>
+                    {% endfor %}
+                    <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                  </ul>
+                </nav>
+
+                {% if articles %}
+                  {% for article in articles %}
+                    <div id="article-{{ loop.index }}" class="article-content" style="display: none">
+                      <center>
+                        <h4>{{ article.title }}</h4><br/>
+                        {{ article.url }} <br/>
+                        {{ article.publish_date }} <br/>
+                        <br/>
+                        {{ sentiment_scores.get(article.url) }}
+                      </center>
+                      <hr/>
+                      {{ article.text }}
+                    </div>
+                  {% endfor %}
+                {% endif %}
+              </div>
             </div>
-          </div>
+          {% endif %}
         </div>
         <div class="col-2">
         </div>
