@@ -21,7 +21,8 @@ def get_article_with_score(url):
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('index.html',
+            search_type='twitter')
 
 
 @app.route('/search-news', methods=['POST'])
@@ -61,7 +62,7 @@ def search_news():
     return render_template('index.html',
             search_type='news',
             articles=articles,
-            query=query,
+            form=request.form,
             sentiment_scores=sentiment_scores,
             mean_sentiment_score=mean_score,
             median_sentiment_score=median_score,
