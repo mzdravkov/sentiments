@@ -4,7 +4,7 @@ import math
 from newspaper import Article
 
 
-NEWS_API_SEARCH_URL = "https://newsapi.org/v2/everything?apiKey={}&q={}&language={}&sortBy=relevancy&page={}&pageSize={}"
+NEWS_API_SEARCH_URL = "https://newsapi.org/v2/everything"
 NEWS_API_KEY=os.environ['NEWS_API_KEY']
 PAGE_SIZE = 100
 
@@ -12,13 +12,31 @@ PAGE_SIZE = 100
 def search_articles(
         keyword,
         article_count,
-        language='en'):
+        language='en',
+        from_date=None,
+        to_date=None):
     pages = math.ceil(article_count / PAGE_SIZE)
     articles = []
     print('pages')
     print(pages)
     for page in range(1, pages+1):
-        response = requests.get(NEWS_API_SEARCH_URL.format(NEWS_API_KEY, keyword, language, page, PAGE_SIZE)).json()
+        params = {
+                'apiKey': NEWS_API_KEY,
+                'q': keyword,
+                'language': language,
+                'sortBy': 'relevancy',
+                'page': page,
+                'pageSize': PAGE_SIZE,
+                }
+        if from_date:
+            params['from'] = from_date
+        if to_date:
+            params['to'] = to_date
+
+        print(params)
+
+        response = requests.get(NEWS_API_SEARCH_URL, params=params).json()
+
         remaining = article_count - len(articles)
         if remaining > PAGE_SIZE:
             articles += response['articles'][0:remaining]
