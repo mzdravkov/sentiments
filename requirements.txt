@@ -3,3 +3,4 @@ requests
 newspaper3k
 flask
 vaderSentiment
+validators

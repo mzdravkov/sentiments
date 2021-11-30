@@ -2,6 +2,7 @@ from flask import Flask
 from flask import render_template
 from flask import request
 
+import validators
 import concurrent.futures
 import statistics
 
@@ -31,33 +32,39 @@ def search_news():
     query = request.form.get('query')
     from_date = request.form.get('start_date')
     to_date = request.form.get('end_date')
-    articles_list = news.search_articles(
-            query,
-            100,
-            from_date=from_date,
-            to_date=to_date)
 
     articles = []
     sentiment_scores = {}
 
-    with concurrent.futures.ThreadPoolExecutor() as executor:
-        futures = []
+    if validators.url(query):
+        article, score = get_article_with_score(query)
+        articles = [article]
+        sentiment_scores[article.url] = score
+    else:
+        articles_list = news.search_articles(
+                query,
+                100,
+                from_date=from_date,
+                to_date=to_date)
 
-        for article_summary in articles_list:
-            futures.append(executor.submit(get_article_with_score, article_summary['url']))
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            futures = []
 
-        for future in concurrent.futures.as_completed(futures):
-            try:
-                article, score = future.result()
-                articles.append(article)
-                sentiment_scores[article.url] = score
-            except:
-                # TODO
-                pass
+            for article_summary in articles_list:
+                futures.append(executor.submit(get_article_with_score, article_summary['url']))
+
+            for future in concurrent.futures.as_completed(futures):
+                try:
+                    article, score = future.result()
+                    articles.append(article)
+                    sentiment_scores[article.url] = score
+                except:
+                    # TODO
+                    pass
 
     mean_score = statistics.mean(sentiment_scores.values())
     median_score = statistics.median(sentiment_scores.values())
-    std_dev = statistics.stdev(sentiment_scores.values())
+    std_dev = statistics.stdev(sentiment_scores.values()) if len(sentiment_scores) > 1 else None
 
     return render_template('index.html',
             search_type='news',
