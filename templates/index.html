@@ -56,7 +56,7 @@
                   <div class="row mb-3">
                     <label for="twitter-query" class="col-sm-2 col-form-label">Query</label>
                     <div class="col-sm-8">
-                      <input name="query" type="text" class="form-control" id="twitter-query" aria-describedby="twitter-query">
+                      <input name="query" type="text" class="form-control" id="twitter-query" aria-describedby="twitter-query" value="{% if search_type == 'tweets' and form is defined %} {{ form.get('query') }} {% endif %}">
                       <div id="twitter-query" class="form-text">Type in keywords for which to search tweets.</div>
                     </div>
                     <div class="col-sm-2">
@@ -100,7 +100,7 @@
                                 {{ tweet.id }}
                               </td>
                               <td>
-                                {{ tweet.created_at }}
+                                {{ tweet.created_at.strftime('%Y-%m-%d') }}
                               </td>
                               <td>
                                 {{ tweet.text }}
